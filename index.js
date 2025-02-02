@@ -3,8 +3,8 @@
 const baseURL =
   "https://crudcrud.com/api/a8a821303b054b8aab9da43fd6c39307/vegShop";
 
+const table = document.querySelector("#dataTable tbody");
 document.addEventListener("DOMContentLoaded", () => {
-  const table = document.querySelector("#dataTable tbody");
   axios.get(baseURL).then(
     (res) => {
       console.log(res.data);
@@ -42,6 +42,18 @@ document.getElementById("vegDetails").addEventListener("submit", (event) => {
     quantity: quantity,
   };
 
+  let row = document.createElement("tr");
+
+  row.innerHTML = `<td>${payload.name}</td>
+        <td>${payload.price}</td>
+        <td>${payload.quantity}</td>
+        <td><input type="number" /></td>
+        <td>
+          <button >Buy</button>
+          <button onclick="deleteRow(this)">Delete</button>
+        </td>`;
+  table.appendChild(row);
+
   axios.post(baseURL, payload).then(
     (res) => {
       console.log("item added");
@@ -50,10 +62,6 @@ document.getElementById("vegDetails").addEventListener("submit", (event) => {
       console.log("error :", error);
     }
   );
-
-  //   console.log(name);
-  //   console.log(price);
-  //   console.log(quantity);
 });
 
 function deleteRow(button) {
