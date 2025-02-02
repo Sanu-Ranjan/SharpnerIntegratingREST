@@ -4,11 +4,14 @@ const baseURL =
   "https://crudcrud.com/api/a8a821303b054b8aab9da43fd6c39307/vegShop";
 
 const table = document.querySelector("#dataTable tbody");
+
+let arrObj = null;
+let myMap = new Map();
 document.addEventListener("DOMContentLoaded", () => {
   axios.get(baseURL).then(
     (res) => {
       console.log(res.data);
-      let arrObj = res.data;
+      arrObj = res.data;
 
       arrObj.forEach((element) => {
         let row = document.createElement("tr");
@@ -22,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button onclick="deleteRow(this)">Delete</button>
         </td>`;
         table.appendChild(row);
+        myMap.set(element.name, element._id);
       });
     },
     (error) => {
@@ -56,7 +60,8 @@ document.getElementById("vegDetails").addEventListener("submit", (event) => {
 
   axios.post(baseURL, payload).then(
     (res) => {
-      console.log("item added");
+      console.log("item added: ", res.data);
+      myMap.set(payload.name, res.data._id);
     },
     (error) => {
       console.log("error :", error);
@@ -65,5 +70,15 @@ document.getElementById("vegDetails").addEventListener("submit", (event) => {
 });
 
 function deleteRow(button) {
-  button.closest("tr").remove();
+  let item = button.closest("tr").querySelector("td").textContent;
+  console.log(item);
+  axios.delete(`${baseURL}/${myMap.get(item)}`).then(
+    () => {
+      console.log("data deleted");
+      button.closest("tr").remove();
+    },
+    (error) => {
+      console.log("data delete failed : ", error);
+    }
+  );
 }
