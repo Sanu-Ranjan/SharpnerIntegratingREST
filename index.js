@@ -7,6 +7,7 @@ const table = document.querySelector("#dataTable tbody");
 
 let arrObj = null;
 let myMap = new Map();
+let totalitems = 0;
 document.addEventListener("DOMContentLoaded", () => {
   axios.get(baseURL).then(
     (res) => {
@@ -14,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
       arrObj = res.data;
 
       arrObj.forEach((element) => {
+        totalitems++;
+        updateTotalItems(totalitems);
         let row = document.createElement("tr");
 
         row.innerHTML = `<td>${element.name}</td>
@@ -61,6 +64,8 @@ document.getElementById("vegDetails").addEventListener("submit", (event) => {
   axios.post(baseURL, payload).then(
     (res) => {
       console.log("item added: ", res.data);
+      totalitems++;
+      updateTotalItems(totalitems);
       myMap.set(payload.name, res.data._id);
     },
     (error) => {
@@ -76,9 +81,15 @@ function deleteRow(button) {
     () => {
       console.log("data deleted");
       button.closest("tr").remove();
+      totalitems--;
+      updateTotalItems(totalitems);
     },
     (error) => {
       console.log("data delete failed : ", error);
     }
   );
+}
+
+function updateTotalItems(num) {
+  document.getElementById("totalItems").textContent = `Total: ${num}`;
 }
